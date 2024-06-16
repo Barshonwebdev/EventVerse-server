@@ -30,6 +30,15 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+
+        // database and collections 
+        // database 
+        const EventVerseDB=client.db('EventVerse-DB');
+        // collections 
+        const allEvents=EventVerseDB.collections('All-Events');
+
+
+
       // Send a ping to confirm a successful connection
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
