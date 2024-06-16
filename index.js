@@ -16,8 +16,22 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 app.use(cors());
 app.use(express.json());
 
-// mongodb uri, client and functions
+// jwt create token function
+function createToken(user) {
+  const token = jwt.sign(
+    {
+      email: user?.email,
+    },
+    `${process.env.JWT_SECRET}`,
+    {
+      expiresIn: "90d",
+    }
+  );
 
+  return token;
+}
+
+// mongodb uri, client and functions
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}${process.env.DB_CLUSTER_URI}`;
 
 const client = new MongoClient(uri, {
@@ -29,23 +43,22 @@ const client = new MongoClient(uri, {
 });
 
 async function run() {
-    try {
+  try {
+    // database and collections
+    // database
+    const EventVerseDB = client.db("EventVerse-DB");
+    // collections
+    const allEvents = EventVerseDB.collections("All-Events");
 
-        // database and collections 
-        // database 
-        const EventVerseDB=client.db('EventVerse-DB');
-        // collections 
-        const allEvents=EventVerseDB.collections('All-Events');
-
-
-
-      // Send a ping to confirm a successful connection
-      await client.db("admin").command({ ping: 1 });
-      console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-     }
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
   }
-  run().catch(console.dir);
+}
+run().catch(console.dir);
 
 // server run test
 app.get("/", async (req, res) => {
